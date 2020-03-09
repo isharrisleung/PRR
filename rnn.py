@@ -9,6 +9,7 @@ import math, random
 
 
 print("Pytorch version:"+str(torch.__version__))
+# 超参
 TIME_STEP = 10 # rnn 时序步长数
 INPUT_SIZE = 1 # rnn 的输入维度
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
@@ -51,6 +52,34 @@ class RNN(nn.Module):
          # r_out = r_out.view(-1, 32)
          # outs = self.out(r_out)
          # return outs, h_state
+
+
+class GRUNet(nn.Module):
+    def __init__(self, input_dim, hidden_dim, output_dim, n_layers, drop_prob=0.2):
+        super(GRUNet, self).__init__()
+        self.hidden_dim = hidden_dim
+        self.n_layers = n_layers
+        
+        self.gru = nn.GRU(input_dim, hidden_dim, n_layers, batch_first=True, dropout=drop_prob)
+        self.fc = nn.Linear(hidden_dim, output_dim)
+        self.relu = nn.ReLU()
+        
+    def forward(self, x, h):
+        out, h = self.gru(x, h)
+        out = self.fc(self.relu(out[:,-1]))
+        return out, h
+    
+    def init_hidden(self, batch_size):
+        weight = next(self.parameters()).data
+        hidden = weight.new(self.n_layers, batch_size, self.hidden_dim).zero_().to(device)
+        return hidden
+
+
+
+
+
+
+
 
 rnn = RNN().to(DEVICE)
 
