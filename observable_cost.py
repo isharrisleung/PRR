@@ -9,35 +9,10 @@ import math, random
 from torchvision import datasets, transforms
 import dataset
 import argparse
+from model import GRU
 
-
-# 超参
-TIME_STEP = 28 # rnn 时序步长数
-INPUT_SIZE = 28 # rnn 的输入维度
-BATCH_SIZE = 512
-HIDDEN_SIZE = 64 # of rnn 隐藏单元个数
-EPOCHS=10 # 总共训练次数
-LR = 0.01
-h_state = None # 隐藏层状态
 train_loss = []  # 误差汇总
 
-class GRU(nn.Module):
-    def __init__(self):
-        super(GRU, self).__init__()
-        self.gru = nn.GRU(
-            input_size=INPUT_SIZE,
-            hidden_size=HIDDEN_SIZE,
-            num_layers=2,
-            batch_first=True,
-        )
-        self.out = nn.Linear(HIDDEN_SIZE, 10)  # (hidden_size, output_size)
-    
-    def forward(self, x):
-        out_state, h_state = self.gru(x, None)
-
-        outs = self.out(out_state[:, -1, :])
-        # print(outs.shape)
-        return outs
 
 def train(args, model, device, train_loader, optimizer, lossfunction, epoch):
     model.train()
@@ -77,7 +52,7 @@ def test(args, model, device, test_loader, lossfunction):
 
 def main():
     # Training settings
-    parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
+    parser = argparse.ArgumentParser()
     parser.add_argument('--batch-size', type=int, default=512, metavar='N',
                         help='input batch size for training (default: 512)')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
@@ -100,18 +75,19 @@ def main():
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
     gru = GRU().to(device)
-    train_loader, test_loader = dataset.load_mnist(batch_size=BATCH_SIZE, test_batch_size=1000, use_cuda=use_cuda, path="./data")
-    optimizer = torch.optim.Adam(gru.parameters(), lr=args.lr) # 优化
-    lossFc = nn.CrossEntropyLoss()
 
-    for step in range(EPOCHS):
-        train(args, gru, device, train_loader, optimizer, lossFc, step)
-    test(args, gru, device, test_loader, lossFc)
 
-    # show loss_line
-    x = [i for i in range(len(train_loss))]
-    plt.plot(x, train_loss)
-    plt.show()
+    # train_loader, test_loader = dataset.load_mnist(batch_size=BATCH_SIZE, test_batch_size=1000, use_cuda=use_cuda, path="./data")
+    # optimizer = torch.optim.Adam(gru.parameters(), lr=args.lr) # 优化
+    # lossFc = nn.CrossEntropyLoss()
+
+    # for step in range(EPOCHS):
+    #     train(args, gru, device, train_loader, optimizer, lossFc, step)
+    # test(args, gru, device, test_loader, lossFc)
+
+    data = pd.read_csv('./data/porto_taxi_data/porto_user_tractory.csv')
+    tra_list = list(data["POLYLINE"])
+
 
 if __name__ == "__main__":
     main()
