@@ -171,5 +171,6 @@ if __name__ == "__main__":
     print("Data convert finished.")
     print("Can process Fast map matching")
     print("test")
+    print("test_git")
 
     
