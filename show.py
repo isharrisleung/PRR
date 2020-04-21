@@ -12,8 +12,8 @@ def show_tra():
      # 在地图上显示轨迹
      locations = []
      pattern = re.compile(r'([-|\d|\.]+),([-|\d|\.]+)')
-     data = pd.read_csv('./data/porto_taxi_data/porto_taxi_tractory.csv')
-     tra_list = list(data["POLYLINE"])
+     data = pd.read_csv('./data/porto_taxi_data/gps_fmm.csv')
+     tra_list = list(data["mageom"])
      length = len(tra_list)
      for i in range(100):     # 选前100条轨迹
           tra = tra_list[i]
@@ -61,5 +61,5 @@ def show_points():
 
 
 if __name__ == "__main__":
-#     show_tra()
-    show_points()
+    show_tra()
+#     show_points()
