@@ -35,7 +35,8 @@ def cal_date():
     plt.show()
 
 def filter_tractory(f):
-    """filter tractory the number of locations of whitch is between 10 and 50
+    print("filter trajectory")
+    """filter tractory
     """
     data = pd.read_csv('./data/porto_taxi_data/porto_user_tractory.csv')
     li = []
@@ -114,6 +115,7 @@ def show_loc():
     print(lng_list[-10:])
 
 def convert2GpsTrajectCsv(f):
+    print("convert trajecory to GpsTrajectCsv")
     data = None
     n = []
     geom = []
@@ -132,6 +134,7 @@ def convert2GpsTrajectCsv(f):
     df.to_csv(f, sep=";", index=0)
 
 def convert2GpsPointCsv(f):
+    print("convert trajecory to GpsPointsCsv")
     data = None
     n = []
     geomx = []
