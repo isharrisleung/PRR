@@ -154,6 +154,7 @@ def convert2GpsPointCsv(f):
 
 def read_fmm():
     file = open("./data/porto_taxi_data/gps_fmm.txt")
+    file.close()
     pass
 
 
@@ -169,5 +170,6 @@ if __name__ == "__main__":
         convert2GpsPointCsv("./data/porto_taxi_data/gps.csv")
     print("Data convert finished.")
     print("Can process Fast map matching")
+    print("test")
 
     
