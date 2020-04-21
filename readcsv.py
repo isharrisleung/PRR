@@ -157,9 +157,68 @@ def convert2GpsPointCsv(f):
 
 def read_fmm():
     file = open("./data/porto_taxi_data/gps_fmm.txt")
+    fmm_list = {}   # 有效的fmm路径 {i_d : [cpath, mageom],}
+    for i in file.readlines():
+        i_d, cpath, mageom = i.split(";")
+        if not cpath == "":
+            fmm_list[i_d] = [cpath, mageom]
+    with open("./data/porto_taxi_data/data_filter.pkl", "rb") as file:
+        data = pickle.load(file)
+    count = 0
+    tra_lookup = {}
+    start_time_list = []
+    for i in data:
+        uid = i["uid"]
+        start_time_list.extend(i["start_time"])
+        tra_lookup[uid] = []
+        for j in i["polyline"]:
+            count += 1
+            tra_lookup[uid].append(count)
+    with open("./data/porto_taxi_data/gps_fmm_2.txt", 'w') as f:
+        f.write("uid;timestamp;capth;mageom\n")
+        for uid in tra_lookup:
+            ti = tra_lookup[uid]
+            for i in ti:
+                u = str(uid)
+                start_time = str(start_time_list[i-1])
+                if str(i) in fmm_list:
+                    ts = ";".join(fmm_list[str(i)])
+                else:
+                    continue
+                f.write(";".join([u, start_time, ts]))
     file.close()
     pass
 
+def filter_fmm_data():
+    file = open("./data/porto_taxi_data/gps_fmm_2.txt")
+    i_d_dic = []
+    tim_dic = []
+    cpath_dic = []
+    mageom_dic = []
+    u = {}   
+    for i in file.readlines():
+        i_d, tim, cpath, mageom = i.strip().split(";")
+        if i_d in u:
+            u[i_d].append([tim, cpath, mageom])
+        else:
+            u[i_d] = [[tim, cpath, mageom]]
+    file.close()
+    for i in u:
+        if i == "uid":
+            continue
+        ta = u[i]
+        # print(ta)
+        # input()
+        if len(ta) >= 10:
+            for a in ta:
+                # print(a)
+                i_d_dic.append(i)
+                tim_dic.append(a[0])
+                cpath_dic.append(a[1])
+                mageom_dic.append(a[2])
+    data = {"uid" : i_d_dic, "timestamp" : tim_dic, "cpath" : cpath_dic, "mageom" : mageom_dic}
+    df = pd.DataFrame(data)
+    df.to_csv("./data/porto_taxi_data/gps_fmm.csv", index=0)
 
 
 if __name__ == "__main__":
@@ -173,7 +232,11 @@ if __name__ == "__main__":
         convert2GpsPointCsv("./data/porto_taxi_data/gps.csv")
     print("Data convert finished.")
     print("Can process Fast map matching")
-    print("test")
-    print("test_git")
+    if not os.path.exists("./data/porto_taxi_data/gps_fmm_2.txt"):
+        read_fmm()
+    if not os.path.exists("./data/porto_taxi_data/gps_fmm_2.txt"):
+        filter_fmm_data()
+
+            
 
     
