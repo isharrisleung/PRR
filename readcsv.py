@@ -152,6 +152,10 @@ def convert2GpsPointCsv(f):
     df = pd.DataFrame(dic)
     df.to_csv(f, sep=";", index=0)
 
+def read_fmm():
+    file = open("./data/porto_taxi_data/gps_fmm.txt")
+    pass
+
 
 
 if __name__ == "__main__":
@@ -165,4 +169,5 @@ if __name__ == "__main__":
         convert2GpsPointCsv("./data/porto_taxi_data/gps.csv")
     print("Data convert finished.")
     print("Can process Fast map matching")
+
     
